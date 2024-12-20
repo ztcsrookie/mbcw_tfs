@@ -149,12 +149,16 @@ def multi_mbcw_cross_validation(normalised_x, original_y, paras, all_causal_path
         num_test_samples = X_test.shape[0]
         for i in range(num_test_samples):
             sample = X_test[i, :]
+            # 投票法进行预测
             add_vote_prediction = mablar_cw_wm_predict_vote(sample, all_fuzzy_systems, all_causal_paths, add_causal_weights)
             weighted_add_vote_prediction = mablar_cw_wm_predict_vote(sample, all_fuzzy_systems, all_causal_paths, weighted_add_causal_weights)
             product_vote_prediction = mablar_cw_wm_predict_vote(sample, all_fuzzy_systems, all_causal_paths, product_causal_weights)
+
+            # 通过计算隶属度进行预测，即对后件为i类的规则的隶属度求和，而后乘以权重。最后值最大的为输出
             add_product_prediction = mablar_cw_wm_predict_product(sample, all_fuzzy_systems, all_causal_paths, add_causal_weights)
             weighted_add_product_prediction = mablar_cw_wm_predict_product(sample, all_fuzzy_systems, all_causal_paths, weighted_add_causal_weights)
             product_product_prediction = mablar_cw_wm_predict_product(sample, all_fuzzy_systems, all_causal_paths, product_causal_weights)
+
             if add_vote_prediction == y_test[i]:
                 add_vote_correct_counts += 1
             if weighted_add_vote_prediction == y_test[i]:
